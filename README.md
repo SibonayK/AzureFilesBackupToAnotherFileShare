@@ -4,7 +4,10 @@ Many Azure Files customers who service, choose to implement a backup solution to
 
 
 ## Solution overview
+
 This solution utilizes AzCopy - an purpose-built tool optimized for Azure Storage data movement needs. AzCopy is a command-line utility that you can use to copy blobs or files to or from a storage account. This solution copies snapshots from one file share to the other to ensure fast backups with minimal space overhead. Only changes will be at copied every backup. The copy happens on server side ensuring that it is fast and has minimal egress. This solution utilizes familiar technologies like Windows task Scheduler and Powershell making it easy to maintain without spending time on ramp-up.
+
+![solution overview](./diyazfilesbackup.jpg)
 
 ## Advantages
 * Space efficiency
@@ -15,6 +18,7 @@ This solution utilizes AzCopy - an purpose-built tool optimized for Azure Storag
 ## Limitations
 * There is no exhausive perf testing done and this solution only works on low churn datasets.
 * There is no CSS support on this solution.
+
 
 ## Contributions
 * This is an open-source community maintained project and we welcome direct contributions to this project.
