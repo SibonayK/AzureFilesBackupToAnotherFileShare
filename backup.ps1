@@ -1,9 +1,5 @@
 ﻿Write-Host "Starting ...."
 Install-Module -Name Az -AllowClobber -Scope AllUsers
-# Connect to Azure
-Connect-AzAccount
-# List Azure Subscriptions
-Get-AzSubscription
 
 # Define Variables
 $targetsubscriptionId = "dd80b94e-0463-4a65-8d04-c94f403879dc"
@@ -15,11 +11,14 @@ $sourcestorageAccountName = "renashtargetazcopy"
 $targetstoragefileshareName = "faketarget"
 $sourcestoragefileshareName = "sourcefileshare"
 $azcopypath = ".\azcopy"
+$spAppPassword = "myVerySecurePassword1234!"
+$spTenatId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+$spAppId = "9c792091-549a-4463-a00c-3c4badb67f19"
 
-
-
-# SOURCE CONTEXT
-
+# Connect to Azure
+$passwd = ConvertTo-SecureString $spAppPassword -AsPlainText -Force
+$pscredential = New-Object System.Management.Automation.PSCredential($spAppId, $passwd)
+Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $spTenatId
 
 # Select right Azure Subscription
 Select-AzSubscription -subscriptionId $sourcesubscriptionId

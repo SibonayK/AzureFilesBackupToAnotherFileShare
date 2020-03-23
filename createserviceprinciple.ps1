@@ -1,9 +1,6 @@
 $sourcesubscriptionId = "dd80b94e-0463-4a65-8d04-c94f403879dc"
-$appidname = "renashazcopyapp"
-$apppassword = "MyVerySecurePassword1234!"
-
-
-
+$appidname = "renashdiyfilesbkapp"
+$apppassword = "myVerySecurePassword1234!"
 
 Select-AzSubscription -subscriptionId $sourcesubscriptionId
 Import-Module Az.Resources # Imports the PSADPasswordCredential object
