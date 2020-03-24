@@ -10,15 +10,24 @@ This solution utilizes AzCopy - an purpose-built tool optimized for Azure Storag
 ![solution overview](./diyazfilesbackup.jpg)
 
 ## Advantages
-* Space efficiency
-* Cost Efficiency
-* Speed
-* Familiar tooling
+### Space/Cost/Time efficiency
+
+Share snapshots are incremental in nature. Only the data that has changed after your most recent share snapshot is saved. This minimizes the time required to create the share snapshot and saves on storage costs. Any write operation to the object or property or metadata update operation is counted toward "changed content" and is stored in the share snapshot.
+
+### Familiar tooling
+
+Powershell, task scheduler and AzCopy are no strangers to most. This solution just uses these to orchestrate your DIY backup.
 
 ## Limitations
 * There is no exhausive perf testing done and this solution only works on low churn datasets.
 * There is no CSS support on this solution.
 
+## Step by step instruction
+
+* Step 1 - Create a Windows Server VM and download the contents of this repo to a permanent location
+* Step 2 - Create Azure AD application and service principal with serviceprincipl.ps1
+* Step 3 - Create a new task scheduler task with backup.ps1
+* Step 4 - Monitor history in Task scheduler
 
 ## Contributions
 * This is an open-source community maintained project and we welcome direct contributions to this project.

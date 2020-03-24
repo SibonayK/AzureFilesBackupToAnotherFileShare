@@ -14,15 +14,33 @@ $targetstoragefileshareName = "target"
 $sourcestoragefileshareName = "source"
 $azcopypath = ".\azcopy"
 # TODO - Change to cert based auth - https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-authenticate-service-principal-powershell#provide-certificate-through-automated-powershell-script-
-$spAppPassword = "myVerySecurePassword1234!"
-$spTenatId = "475ce392-90cc-4e97-94b5-028213916c6f"
-$spAppId = "4bfba36a-e902-4ede-8f7a-22968dc8bf63"
+# $spAppPassword = "myVerySecurePassword1234!"
+$CertPath = "My"
+$CertPlainPassword = "1234"
+$ApplicationId = "70b01cd2-a9c6-4e5f-bc0c-24218cbaad3d"
+$TenatId = "475ce392-90cc-4e97-94b5-028213916c6f"
+#$spTenatId = "475ce392-90cc-4e97-94b5-028213916c6f"
+#$spAppId = "4bfba36a-e902-4ede-8f7a-22968dc8bf63"
 
 # SOURCE
+
 # Connect to Azure
-$passwd = ConvertTo-SecureString $spAppPassword -AsPlainText -Force
-$pscredential = New-Object System.Management.Automation.PSCredential($spAppId, $passwd)
-Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $spTenatId -Subscription $sourcesubscriptionId
+
+$CertPassword = ConvertTo-SecureString $CertPlainPassword -AsPlainText -Force
+ $PFXCert = New-Object `
+  -TypeName System.Security.Cryptography.X509Certificates.X509Certificate2 `
+  -ArgumentList @($CertPath, $CertPassword)
+ $Thumbprint = $PFXCert.Thumbprint
+
+ Connect-AzAccount -ServicePrincipal `
+  -CertificateThumbprint $Thumbprint `
+  -ApplicationId $ApplicationId `
+  -TenantId $TenantId -Subscription $SubscriptionId
+
+  # Password based auth
+# $passwd = ConvertTo-SecureString $spAppPassword -AsPlainText -Force
+# $pscredential = New-Object System.Management.Automation.PSCredential($spAppId, $passwd)
+# Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $spTenatId -Subscription $sourcesubscriptionId
 
 # Get Storage Account Key
 $sourcestorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $sourcestorageAccountRG -Name $sourcestorageAccountName).Value[0]
