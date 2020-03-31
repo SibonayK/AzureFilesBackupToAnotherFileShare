@@ -1,7 +1,6 @@
 # AzCopy based Azure Files Backup To Another FileShare
 
-Many Azure Files customers who service, choose to implement a backup solution to another file share to be able to recover from unintended changes or deletions to their file systems. Azure Bakup solution today, is snapshot based. Which means that it will store data in same file share. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
-
+Many Azure Files customers who service, choose to implement a backup solution to another file share to be able to recover from unintended changes or deletions to their file systems. Azure Backup solution today, is snapshot based. Which means that it will store data in same file share. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
 
 ## Solution overview
 
@@ -10,6 +9,7 @@ This solution utilizes AzCopy - an purpose-built tool optimized for Azure Storag
 ![solution overview](./diyazfilesbackup.jpg)
 
 ## Advantages
+
 ### Space/Cost/Time efficiency
 
 Share snapshots are incremental in nature. Only the data that has changed after your most recent share snapshot is saved. This minimizes the time required to create the share snapshot and saves on storage costs. Any write operation to the object or property or metadata update operation is counted toward "changed content" and is stored in the share snapshot.
@@ -19,7 +19,8 @@ Share snapshots are incremental in nature. Only the data that has changed after 
 Powershell, task scheduler and AzCopy are no strangers to most. This solution just uses these to orchestrate your DIY backup.
 
 ## Limitations
-* There is no exhausive perf testing done and this solution only works on low churn datasets.
+
+* There is no exhaustive perf testing done and this solution only works on low churn datasets.
 * There is no CSS support on this solution.
 
 ## Step by step instruction
@@ -30,4 +31,5 @@ Powershell, task scheduler and AzCopy are no strangers to most. This solution ju
 * Step 4 - Monitor history in Task scheduler
 
 ## Contributions
+
 * This is an open-source community maintained project and we welcome direct contributions to this project.
