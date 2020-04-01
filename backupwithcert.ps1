@@ -1,9 +1,9 @@
-﻿$LogTime = Get-Date -Format "MM-dd-yyyy_hh-mm-ss"
-#  Log file name:
-$LogFile = 'F:\LOG\'+"BACKUPLOG_"+$LogTime+".log"
-Start-Transcript -Path $LogFile -Append
-#Install-Module -Name Az -AllowClobber -Scope AllUsers
-Write-Host "Starting ...."
+﻿# Run the script in a new open Powershell window, which has not run other cmdlets, or AzCopy performance could suffer .
+# Need install Azure PowerShell before runing the script: https://docs.microsoft.com/en-us/azure/storage/common/storage-powershell-guide-full
+# Need install AzCopy before runing the script: https://docs.microsoft.com/en-us/azure/storage/common/storage-use-azcopy-v10
+# Need to creeate Service principle and install the cert on the computer running this script
+# Do not modify the Source or Destination accounts while the copy is running
+
 # Define Variables
 $subscriptionId = "7823e5c9-9c8d-4214-b814-e18363bfb850"
 $targetstorageAccountRG = "renashdiybackuprg"
@@ -17,8 +17,18 @@ $CertPath = "cert:\CurrentUser\My\"
 $CertName = "CN=renashazfilebkpappScriptCert"
 $ApplicationId = "5dc7f74f-ecef-4542-ad8d-89ce81fa501d"
 $TenantId = "475ce392-90cc-4e97-94b5-028213916c6f"
+$numsnapshotretention = 10
+
+# Start Logging
+$LogTime = Get-Date -Format "MM-dd-yyyy_hh-mm-ss"
+$LogFile = 'F:\LOG\'+"BACKUPLOG_"+$LogTime+".log"
+Start-Transcript -Path $LogFile -Append
+
+Write-Host "Starting Using task Scheduler...."
 
 # SOURCE
+$Error.Clear()
+
 # Connect to Azure
 $PFXCert=Get-ChildItem  -Recurse -Path $CertPath | where {$_.Subject -eq $CertName }
 $Thumbprint = $PFXCert.Thumbprint
@@ -27,11 +37,6 @@ $Thumbprint = $PFXCert.Thumbprint
   -CertificateThumbprint $Thumbprint `
   -ApplicationId $ApplicationId `
   -TenantId $TenantId -Subscription $subscriptionId
-
-  # Password based auth
-# $passwd = ConvertTo-SecureString $spAppPassword -AsPlainText -Force
-# $pscredential = New-Object System.Management.Automation.PSCredential($spAppId, $passwd)
-# Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $spTenatId -Subscription $subscriptionId
 
 # Get Storage Account Key
 $sourcestorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $sourcestorageAccountRG -Name $sourcestorageAccountName).Value[0]
@@ -82,4 +87,22 @@ Stop-Transcript
 
 # Upload log file to destination file share
 
-Set-AzStorageFileContent -Context $destinationContext -source $LogFile -ShareName $targetstoragefileshareName -PreserveSMBAttribute
+Set-AzStorageFileContent -Context $sourceContext -source $LogFile -ShareName $sourcestoragefileshareName -PreserveSMBAttribute
+
+# retain lastest n snapshots on source
+$snapshots = Get-AzStorageShare -Context $sourceContext | where {$_.Name.Equals($sourcestoragefileshareName)} | where{ $_.IsSnapshot -eq $true }
+$date = $sourcesnapshot.SnapshotTime
+$snapshotToDelete = $null
+do
+{
+  foreach ($s in $snapshots)
+    {
+        if ($s.Properties.LastModified.CompareTo($date) -lt 0 -and $snapshots.Count -gt $numsnapshotretention)
+        {
+            $snapshotToDelete = $s
+            $date = $s.Properties.LastModified
+        }
+    }
+Remove-AzStorageShare -Force -Name $snapshotToDelete.Name -Context $sourceContext
+$snapshots = Get-AzStorageShare -Context $sourceContext | where {$_.Name.Equals($sourcestoragefileshareName)} | where{ $_.IsSnapshot -eq $true }
+} while ($snapshots.Count -gt $numsnapshotretention)
