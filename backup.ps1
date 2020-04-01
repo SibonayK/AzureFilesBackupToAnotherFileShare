@@ -16,7 +16,7 @@ $azcopypath = ".\azcopy"
 # TODO - Change to cert based auth - https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-authenticate-service-principal-powershell#provide-certificate-through-automated-powershell-script-
 $spAppPassword = "myVerySecurePassword1234!"
 $spTenatId = "475ce392-90cc-4e97-94b5-028213916c6f"
-$spAppId = "4bfba36a-e902-4ede-8f7a-22968dc8bf63"
+$spAppId = "b0db7c9d-a3b2-4bbc-9b10-b0f15f35ae20"
 
 # SOURCE
 # Connect to Azure
@@ -35,7 +35,7 @@ $sourceshare = Get-AzStorageShare -Context $sourceContext.Context -Name $sources
 $sourcesnapshot = $sourceshare.Snapshot()
 
 # Generate source Snapshot SAS URI
-$sourceSASURIBasePermission = New-AzStorageAccountSASToken -Context $destinationContext -Service File -ResourceType Service,Container,Object -Permission "racwdlup"  -ExpiryTime (get-date).AddMonths(60) -StartTime (get-date).AddSeconds(-100)
+$sourceSASURIBasePermission = New-AzStorageAccountSASToken -Context $sourceContext -Service File -ResourceType Service,Container,Object -Permission "racwdlup"  -ExpiryTime (get-date).AddMonths(60) -StartTime (get-date).AddSeconds(-100)
 $sourceSASURI = $sourceContext.FileEndPoint.ToString() + $sourceSASURIBasePermission.Replace('?',($sourcesnapshot.SnapshotQualifiedUri.PathAndQuery.Substring(1) + "&"))
 
 # TARGET
@@ -58,11 +58,11 @@ $targetSASURI = New-AzStorageShareSASToken -Context $destinationContext -ExpiryT
 
 # Upload File using AzCopy
 Set-Location -Path $azcopypath
-$azcopyout = .\azcopy.exe sync $sourceSASURI $targetSASURI
+$azcopyout = .\azcopy_windows_amd64 sync $sourceSASURI $targetSASURI
 Write-Output $azcopyout
 
 # Snapshot target share
-$targetshare = Get-AzStorageShare -Context $targetContext.Context -Name $targetstoragefileshareName
+$targetshare = Get-AzStorageShare -Context $destinationContext -Name $targetstoragefileshareName
 $targetshare.Snapshot()
 
 # TODO - For standardization, make error handling, logging, parameterization and retries like in https://github.com/Azure/azure-docs-powershell-samples/blob/master/storage/migrate-blobs-between-accounts/migrate-blobs-between-accounts.ps1
