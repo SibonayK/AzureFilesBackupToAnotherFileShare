@@ -24,12 +24,13 @@ $numsnapshotretention = 10
 $LogTime = Get-Date -Format "MM-dd-yyyy_hh-mm-ss"
 $LogFile = 'F:\LOG\'+"BACKUPLOG_"+$LogTime+".log"
 Start-Transcript -Path $LogFile -Append
-
 Write-Host "Starting Using task Scheduler...."
 
-# SOURCE
+# Terminate on Error
 $Error.Clear()
+$ErrorActionPreference = 'Stop'
 
+# SOURCE
 # Connect to Azure
 $PFXCert=Get-ChildItem  -Recurse -Path $CertPath | where {$_.Subject -eq $CertName }
 $Thumbprint = $PFXCert.Thumbprint

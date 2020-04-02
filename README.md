@@ -9,6 +9,28 @@ This solution utilizes AzCopy - an purpose-built tool optimized for Azure Storag
 
 ![solution overview](./diyazfilesbackup.jpg)
 
+## Step-By-Step Setup Process
+
+### Create a Windows VM (with a disk)
+TODO - Give link to VM creation
+### Download this Github content to local disk
+Make sure you do this on a non-efhermal disk
+### Run serviceprinciplecreation.ps1
+* Run this as an admin
+* Substitute the variable values with your own
+* Open Cert manager to ensure cert is created
+* From Azure Portal to check if an app is registered under active directory
+* From Azure Portal check if this new App has contributor role on your subscription
+
+### Setup Task Scheduler
+* TODo - Screenshots of how to set up task scheduler to run backup.ps1
+
+### Monitor
+* Logs are uploaded to specified share
+* Task scheduler history
+* Setup email error reporting with SMTP Server in Task Scheduler
+
+
 ## Advantages
 * Space efficiency
 * Cost Efficiency
