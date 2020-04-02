@@ -1,0 +1,6 @@
+
+requirements.psd1
+proxies.json
+profile.ps1
+*.json
+.funcignore
