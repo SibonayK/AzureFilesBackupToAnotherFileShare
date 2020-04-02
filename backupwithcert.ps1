@@ -5,18 +5,19 @@
 # Do not modify the Source or Destination accounts while the copy is running
 
 # Define Variables
-$subscriptionId = "7823e5c9-9c8d-4214-b814-e18363bfb850"
-$targetstorageAccountRG = "renashdiybackuprg"
-$sourcestorageAccountRG = "renashdiybackuprg"
-$targetstorageAccountName = "renashdiybackupsa"
-$sourcestorageAccountName = "renashdiybackupsa"
+$sourcesubscriptionId = "157153da-0965-4353-8183-d6e5a52c92cb"
+$targetsubscriptionId = "dd80b94e-0463-4a65-8d04-c94f403879dc"
+$targetstorageAccountRG = "mydiybackuprg"
+$sourcestorageAccountRG = "afslfsresourcegroup"
+$targetstorageAccountName = "mydiybackupsa"
+$sourcestorageAccountName = "afslfspfseastus2"
 $targetstoragefileshareName = "target"
-$sourcestoragefileshareName = "source"
+$sourcestoragefileshareName = "30tbfileshare"
 $azcopypath = "F:\drop\drop\"
 $CertPath = "cert:\CurrentUser\My\"
-$CertName = "CN=renashazfilebkpappScriptCert"
-$ApplicationId = "5dc7f74f-ecef-4542-ad8d-89ce81fa501d"
-$TenantId = "475ce392-90cc-4e97-94b5-028213916c6f"
+$CertName = "CN=myazfilebkpappScriptCert"
+$ApplicationId = "2f75b54b-82df-4975-a5c5-6b938cbd5cd6"
+$TenantId = "72f988bf-86f1-41af-91ab-2d7cd011db47"
 $numsnapshotretention = 10
 
 # Start Logging
@@ -36,7 +37,7 @@ $Thumbprint = $PFXCert.Thumbprint
  Connect-AzAccount -ServicePrincipal `
   -CertificateThumbprint $Thumbprint `
   -ApplicationId $ApplicationId `
-  -TenantId $TenantId -Subscription $subscriptionId
+  -TenantId $TenantId -Subscription $sourcesubscriptionId
 
 # Get Storage Account Key
 $sourcestorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $sourcestorageAccountRG -Name $sourcestorageAccountName).Value[0]
@@ -57,7 +58,7 @@ $sourceSASURI = $sourceContext.FileEndPoint.ToString() + $sourceSASURIBasePermis
  Connect-AzAccount -ServicePrincipal `
   -CertificateThumbprint $Thumbprint `
   -ApplicationId $ApplicationId `
-  -TenantId $TenantId -Subscription $subscriptionId
+  -TenantId $TenantId -Subscription $targetsubscriptionId
 
 # Get Storage Account Key
 $targetstorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $targetstorageAccountRG -Name $targetstorageAccountName).Value[0]
