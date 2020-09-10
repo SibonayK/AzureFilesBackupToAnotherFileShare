@@ -15,14 +15,15 @@ $sourcestoragefileshareName = "source"
 $azcopypath = ".\azcopy"
 # TODO - Change to cert based auth - https://docs.microsoft.com/en-us/azure/active-directory/develop/howto-authenticate-service-principal-powershell#provide-certificate-through-automated-powershell-script-
 $spAppPassword = "myVerySecurePassword1234!"
-$spTenatId = "475ce392-90cc-4e97-94b5-028213916c6f"
+$spTenantId = "475ce392-90cc-4e97-94b5-028213916c6f"
 $spAppId = "b0db7c9d-a3b2-4bbc-9b10-b0f15f35ae20"
 
 # SOURCE
 # Connect to Azure
 $passwd = ConvertTo-SecureString $spAppPassword -AsPlainText -Force
 $pscredential = New-Object System.Management.Automation.PSCredential($spAppId, $passwd)
-Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $spTenatId -Subscription $sourcesubscriptionId
+# TODO - If this step fails, check  access control for the storage account. Under role assignment, give contributor access to the app id
+Connect-AzAccount -ServicePrincipal -Credential $pscredential -Tenant $spTenantId -Subscription $sourcesubscriptionId
 
 # Get Storage Account Key
 $sourcestorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $sourcestorageAccountRG -Name $sourcestorageAccountName).Value[0]
@@ -32,7 +33,7 @@ $sourceContext = New-AzStorageContext -StorageAccountKey $sourcestorageAccountKe
 
 # Snapshot source share
 $sourceshare = Get-AzStorageShare -Context $sourceContext.Context -Name $sourcestoragefileshareName
-$sourcesnapshot = $sourceshare.Snapshot()
+$sourcesnapshot = $sourceshare.CloudFileShare.Snapshot()
 
 # Generate source Snapshot SAS URI
 $sourceSASURIBasePermission = New-AzStorageAccountSASToken -Context $sourceContext -Service File -ResourceType Service,Container,Object -Permission "racwdlup"  -ExpiryTime (get-date).AddMonths(60) -StartTime (get-date).AddSeconds(-100)
@@ -63,6 +64,6 @@ Write-Output $azcopyout
 
 # Snapshot target share
 $targetshare = Get-AzStorageShare -Context $destinationContext -Name $targetstoragefileshareName
-$targetshare.Snapshot()
+$targetshare.CloudFileShare.Snapshot()
 
 # TODO - For standardization, make error handling, logging, parameterization and retries like in https://github.com/Azure/azure-docs-powershell-samples/blob/master/storage/migrate-blobs-between-accounts/migrate-blobs-between-accounts.ps1
