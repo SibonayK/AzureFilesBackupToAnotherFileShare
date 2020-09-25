@@ -59,7 +59,7 @@ $targetSASURI = New-AzStorageShareSASToken -Context $destinationContext -ExpiryT
 
 # Upload File using AzCopy
 Set-Location -Path $azcopypath
-$azcopyout = .\azcopy_windows_amd64 sync $sourceSASURI $targetSASURI
+$azcopyout = $azcopypath sync $sourceSASURI $targetSASURI  --preserve-smb-info --preserve-smb-permissions --recursive=true
 Write-Output $azcopyout
 
 # Snapshot target share
