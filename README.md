@@ -1,6 +1,6 @@
 # AzCopy based Azure Files Backup To Another FileShare
 
-Many Azure Files customers who service, choose to implement a backup solution to another file share to be able to recover from unintended changes or deletions to their file systems. The current solution implemented by Azure Backup is snapshot-based, which means that it will store data in same file share. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule and stores the backups in a separate storage account. In particular, it enables customers to achieve geographic redundancy for their backups. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
+Many Azure Files customers wish to back up their data in another storage account to be able to recover from unintended changes or deletions to their file systems. The current solution implemented by Azure Backup is snapshot-based, which means that it will store data in same file share. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule and stores the backups in a separate storage account. In particular, it enables customers to achieve geographic redundancy for their backups. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
 
 
 ## Solution overview
