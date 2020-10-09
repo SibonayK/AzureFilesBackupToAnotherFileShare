@@ -10,6 +10,7 @@ $targetstorageAccountName = <TargetStorageAcccountName>
 $sourcestoragefileshareName = <SourceShareName>
 $targetstoragefileshareName = <TargetShareName>
 $azcopypath = <PathToAzCopy.exe>
+$maxSnapshots = <maxSnapshotsNumber> # The maximum number of snapshots that can be stored in an Azure file share is 200
 
 # Variables defined when creating the service principal. These values were printed to the console in the service principal script. 
 $spTenantId = <TenantID>
@@ -25,6 +26,21 @@ $sourcestorageAccountKey = (Get-AzStorageAccountKey -ResourceGroupName $sourcest
 
 # Set AzStorageContext
 $sourceContext = New-AzStorageContext -StorageAccountKey $sourcestorageAccountKey -StorageAccountName $sourcestorageAccountName
+
+# List current snapshots
+$storageAcct = Get-AzStorageAccount -ResourceGroupName $sourcestorageAccountRG -Name $sourcestorageAccountName
+$snapshots = Get-AzStorageShare `
+    -Context $storageAcct.Context | `
+Where-Object { $_.Name -eq $sourcestoragefileshareName -and $_.IsSnapshot -eq $true }
+
+# Delete old snapshots if have exceeded the maximum amount of snapshots
+$numSnapshots = $snapshots.Count
+If ($numSnapshots -ge $maxSnapshots) {
+    For ($i=0; $i -lt ($numSnapshots - $maxSnapshots); $i++) {
+        Remove-AzStorageShare `
+             -Share $snapshots[$i].CloudFileShare -Force
+    }
+}
 
 # Snapshot source share
 $sourceshare = Get-AzStorageShare -Context $sourceContext.Context -Name $sourcestoragefileshareName
