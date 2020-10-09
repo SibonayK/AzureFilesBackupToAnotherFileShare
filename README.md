@@ -1,6 +1,6 @@
 # AzCopy based Azure Files Backup To Another FileShare
 
-Many Azure Files customers wish to back up their data in another storage account to be able to recover from unintended changes or deletions to their file systems. The current solution implemented by Azure Backup is snapshot-based, which means that it will store data in same file share. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule and stores the backups in a separate storage account. In particular, it enables customers to achieve geographic redundancy for their backups. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
+Many Azure Files customers wish to back up their data in another storage account to be able to recover from unintended changes or deletions to their file systems. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule and stores the backups in a separate storage account. In particular, it enables customers to achieve geographic redundancy for their backups. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
 
 
 ## Solution overview
@@ -12,7 +12,7 @@ The solution works as follows:
 2. Copy snapshot just taken to the target share using azcopy --sync.
 3. Snapshot target share. Result is both snapshots are the same. 
 4. Repeat steps (1-3) using Task Scheduler to replicate more snapshots on a schedule of your choosing. Sync will only transfer new files or files that have changed, and will also remove deleted files from target.
-
+5. You specify the maximum number of snapshots you would like to keep. Once you hit this, this script will automatically remove your oldest snapshots, ensuring you don't hit the Azure Files snapshot limit and so are always able to take new snapshots.
 
 ![solution overview](./AzCopyBackup.png)
 
