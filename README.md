@@ -7,6 +7,13 @@ Many Azure Files customers wish to back up their data in another storage account
 
 This solution utilizes AzCopy - an purpose-built tool optimized for Azure Storage data movement needs. AzCopy is a command-line utility that you can use to copy blobs or files to or from a storage account. This solution copies snapshots from one file share to the other to ensure fast backups with minimal space overhead. It uses the sync parameter, which is similar to Robocopy /MIR.  Only changes will be at copied with every backup, and any deletions on the source will be mirrored on the target. The copy happens on the server-side, ensuring that it is fast and has minimal egress. This solution utilizes familiar technologies like Windows Task Scheduler and PowerShell, making it easy to maintain without spending time on ramp-up.
 
+The solution works as follows:
+1. Snapshot source share.
+2. Copy snapshot just taken to the target share using azcopy --sync.
+3. Snapshot target share. Result is both snapshots are the same. 
+4. Repeat steps (1-3) using Task Scheduler to replicate more snapshots on a schedule of your choosing. Sync will only transfer new files or files that have changed, and will also remove deleted files from target.
+
+
 ![solution overview](./AzCopyBackup.png)
 
 ## Requirements
