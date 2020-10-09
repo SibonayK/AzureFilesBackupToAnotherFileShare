@@ -1,2 +1,0 @@
-fsutil file createnew filename filesize
-For /L %i in (1,1,25000) do fsutil file createnew A%i.tmp 12288
