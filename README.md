@@ -32,6 +32,8 @@ The solution works as follows:
   * Another 1TB dataset consisting of many small files averaging 0.005GB each took 3 hours to copy to an empty secondary share.
   * After the initial copy to an empty secondary share, the copy time will vary based on the amount of churn, as only changes are copied over.
   * Datasets with more than 50 million files will experience significantly worse performance.
+* AzCopy currently does not allow ACLs to be set on the root of the share.
+* If an attribute or ACL is changed on the root (meaning all files and directories underneath the root inherit this attribute), all of the data rather than simply the metadata will be recopied to the target share.
 * There is no CSS support on this solution.
 
 
