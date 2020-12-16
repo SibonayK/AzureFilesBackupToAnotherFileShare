@@ -28,8 +28,8 @@ The solution works as follows:
 ## Limitations
 * There has not been exhausive perf testing done.
 * This solution works best on low churn datasets and/or datasets with fewer files and folders (the copy rate is less defined by the data size than the number of files and folders being copied over).
-  * During initial perf testing, it was observed that a 1TB dataset consisting of 100GB files took about 30 minutes to copy to an empty secondary share.
-  * Another 1TB dataset consisting of many small files averaging 0.005GB each took 3 hours to copy to an empty secondary share.
+  * During initial perf testing (for a premium file share with 30TB of provisioned capacity), it was observed that a 1TB dataset consisting of 100GB files took about 30 minutes to copy to an empty secondary share.
+  * Another 1TB dataset (also for a premium file share with 30TB of provisioned capacity) consisting of many small files averaging 0.005GB each took 3 hours to copy to an empty secondary share.
   * After the initial copy to an empty secondary share, the copy time will vary based on the amount of churn, as only changes are copied over.
   * Datasets with more than 50 million files will experience significantly worse performance.
 * AzCopy currently does not allow ACLs to be set on the root of the share.
