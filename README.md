@@ -17,7 +17,7 @@ The solution works as follows:
 ![solution overview](./AzCopyBackup.png)
 
 ## Requirements
-* AzCopy version 10.6 or later
+* AzCopy version 10.8 or later
 * VM on which to run the script (we recommend a VM in the same Azure region as the source file share)
 
 ## Advantages
