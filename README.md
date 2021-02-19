@@ -2,6 +2,7 @@
 
 Many Azure Files customers wish to back up their data in another storage account to be able to recover from unintended changes or deletions to their file systems. This solution will enable you to create your own easy backup solution that automatically creates incremental backups of an Azure Files system on a customer-defined schedule and stores the backups in a separate storage account. In particular, it enables customers to achieve geographic redundancy for their backups. This webpage provides an overview of the Azure Files AzCopy based backup solution's design and functionality.
 
+For full details on how to automate this solution, read the following blog post by Microsoft MVP Charbel Nemnom: [Sync between Two Azure File Shares for Disaster Recovery](" https://charbelnemnom.com/sync-between-two-azure-file-shares-for-disaster-recovery").
 
 ## Solution overview
 
@@ -11,14 +12,16 @@ The solution works as follows:
 1. Snapshot source share.
 2. Copy snapshot just taken to the target share using azcopy --sync.
 3. Snapshot target share. Result is both snapshots are the same. 
-4. Repeat steps (1-3) using Task Scheduler or Azure Batch to replicate more snapshots on a schedule of your choosing. Sync will only transfer new files or files that have changed, and will also remove deleted files from target.
-5. You specify the maximum number of snapshots you would like to keep. Once you hit this, this script will automatically remove your oldest snapshots, ensuring you don't hit the Azure Files snapshot limit and so are always able to take new snapshots.
+4. The script automatically removes your oldest manual snapshot when you are close to the Azure Files snapshot limit (currently 200), ensuring your scheduled backup jobs never fail.
+5. You can automate these steps using Azure Automation (see [Sync between Two Azure File Shares for Disaster Recovery](" https://charbelnemnom.com/sync-between-two-azure-file-shares-for-disaster-recovery") for more details). AzCopy sync will only transfer new files or files that have changed, and will also remove deleted files from target.
+
 
 ![solution overview](./AzCopyBackup.png)
 
 ## Requirements
+* Azure subscription
+* Two different storage accounts, each containing an Azure file share
 * AzCopy version 10.8 or later
-* VM on which to run the script (we recommend a VM in the same Azure region as the source file share)
 
 ## Advantages
 * Space efficiency
